@@ -1,18 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/GeolocatorSettings.dart';
+import 'package:flutter_app_test/gpsPermission.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Map extends StatefulWidget {
   const Map({Key? key}) : super(key: key);
-
   @override
   State<Map> createState() => MapSampleState();
 }
 
 class MapSampleState extends State<Map> {
   final Completer<GoogleMapController> _controller = Completer();
-
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
@@ -26,24 +27,37 @@ class MapSampleState extends State<Map> {
 
   @override
   Widget build(BuildContext context) {
+    GpsPermission().determinePosition();
+    GeolocatorSettings().setting();
+
     return Scaffold(
       body: GoogleMap(
-        mapType: MapType.hybrid,
+        mapType: MapType.normal,
+        myLocationButtonEnabled: false,
+        myLocationEnabled: true,
+        zoomControlsEnabled: false,
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
-        icon: const Icon(Icons.directions_boat),
+      floatingActionButton: FloatingActionButton(
+        onPressed: MyPosition,
+        child: Icon(Icons.gps_fixed),
       ),
     );
   }
 
-  Future<void> _goToTheLake() async {
+  Future<bool> MyPosition() async {
+    late CameraPosition MyPosition;
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+
+    Position nowPosi = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print('緯度＝${nowPosi.latitude} 経度＝${nowPosi.longitude}');
+    MyPosition = CameraPosition(
+        target: LatLng(nowPosi.latitude, nowPosi.longitude), zoom: 14);
+    controller.animateCamera(CameraUpdate.newCameraPosition(MyPosition));
+    return true;
   }
 }

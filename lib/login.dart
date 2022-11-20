@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/main.dart';
+import 'package:lottie/lottie.dart';
 import 'map.dart';
 
 class loginValidate extends StatefulWidget {
@@ -16,9 +19,10 @@ class _loginValidateState extends State<loginValidate> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('JboyApp'),
+        title: Text('ログイン'),
         backgroundColor: Colors.blue,
       ),
       body: Center(
@@ -28,7 +32,13 @@ class _loginValidateState extends State<loginValidate> {
             key: _formkey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        child: Lottie.asset('assets/lottiefile.json',width: 210,height: 200,fit: BoxFit.fill),
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -41,6 +51,8 @@ class _loginValidateState extends State<loginValidate> {
                     },
                     decoration: const InputDecoration(
                       labelText: 'ユーザー名を入力してください',
+                      //border: OutlineInputBorder(),
+                      icon: Icon(Icons.person_sharp),
                     ),
                   ),
                 ),
@@ -56,28 +68,33 @@ class _loginValidateState extends State<loginValidate> {
                     },
                     obscureText: _isObscure,
                     decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                            icon: Icon(_isObscure
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                _isObscure = !_isObscure;
-                              });
-                            })),
+                      labelText: 'パスワード',
+                      //border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                          icon: Icon(_isObscure
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          }),
+                      icon: Icon(Icons.lock),
+                    ),
                   ),
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_formkey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Processing Data')),
-                        );
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Map()));
-                      }
-                    }, child: Text('ログイン')),
+                      onPressed: () {
+                        if (_formkey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Processing Data')),
+                          );
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Map()));
+                        }
+                      },
+                      child: Text('ログイン')),
                 ),
               ],
             ),
